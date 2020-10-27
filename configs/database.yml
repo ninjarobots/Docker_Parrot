@@ -29,4 +29,3 @@ test:
   port: 5432
   pool: 5
   timeout: 5
-
