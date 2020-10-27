@@ -1,0 +1,48 @@
+version: '3'
+services:
+
+  msfdb:
+    image: postgres:alpine
+    container_name: msfdb
+    environment:
+      POSTGRES_USER: msfuser
+      POSTGRES_PASSWORD: msfpassword
+      POSTGRES_DB: msf
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      msf:
+
+  parrot:
+    image: parrotsec/security:latest
+    container_name: Parrotsec
+    stdin_open: true
+    tty: true
+    volumes:
+      - bin:/bin/
+      - etc:/etc/
+      - lib:/lib/
+      - lib64:/lib64/
+      - root:/root/
+      - run:/run/
+      - sys:/sys/
+      - usr:/usr/
+      - ./home:/home
+      - ./configs/database.yml:/usr/share/metasploit-framework/config/database.yml
+    networks:
+      msf:
+
+volumes:
+  bin:
+  dev:
+  etc:
+  lib:
+  lib64:
+  root:
+  run:
+  sys:
+  usr:
+  pg_data:
+
+networks:
+  msf:

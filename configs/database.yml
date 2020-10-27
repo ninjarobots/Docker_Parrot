@@ -1,0 +1,32 @@
+#copy to /usr/share/metasploit-framework/config/database.yml
+
+development:
+  adapter: postgresql
+  database: msf
+  username: msfuser
+  password: msfpassword
+  host: msfdb
+  port: 5432
+  pool: 5
+  timeout: 5
+
+production:
+  adapter: postgresql
+  database: msf
+  username: msfuser
+  password: msfpassword
+  host: msfdb
+  port: 5432
+  pool: 5
+  timeout: 5
+
+test:
+  adapter: postgresql
+  database: msf
+  username: msfuser
+  password: msfpassword
+  host: msfdb
+  port: 5432
+  pool: 5
+  timeout: 5
+
