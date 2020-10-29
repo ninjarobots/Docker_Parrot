@@ -1,6 +1,41 @@
 version: '3'
 services:
 
+  vpn:
+    image: dperson/openvpn-client
+    container_name: vpn
+    # cap_add, security_opt, and volume required for the image to function
+    cap_add:
+      - net_admin
+    environment:
+      TZ: 'EST5EDT'
+    networks:
+      msf:
+    # if using '-d' or 'DNS' you can't enable the `read_only: true` option
+    read_only: true
+#    devices:
+#      - /dev/net/tun:/dev/net/tun
+    tmpfs:
+      - /run
+      - /tmp
+    restart: unless-stopped
+    security_opt:
+      - label:disable
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./vpn:/vpn
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      msf:
+    command: openvpn --config /vpn/NinjaRobots.ovpn
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    # Put .ovpn configuration file in the /vpn directory (in "volumes:" above or
+    # launch using the command line arguments, IE pick one:
+    #  - ./vpn:/vpn
+    # command: 'server;user;password[;port]'
+
   msfdb:
     image: postgres:alpine
     container_name: msfdb
@@ -8,6 +43,7 @@ services:
       POSTGRES_USER: msfuser
       POSTGRES_PASSWORD: msfpassword
       POSTGRES_DB: msf
+    restart: unless-stopped
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
@@ -29,8 +65,11 @@ services:
       - usr:/usr/
       - ./home:/home
       - ./configs/database.yml:/usr/share/metasploit-framework/config/database.yml
-    networks:
-      msf:
+    network_mode: service:vpn
+    depends_on:
+      - vpn
+#    networks:
+#      msf:
 
 volumes:
   bin:
